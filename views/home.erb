@@ -1,51 +1,30 @@
-<table class="table">
-  <thead>
-    <tr>
-<!--
-      <th colspan="4" style="border-top:0px;">
-      <input type="text" class="input-large search-query" id="search_filter" >
-      <button class="btn" type="submit" id="search">
-        搜索
-      </button></th>
--->
-      <th style="border-top:0px;">
-          <a class="btn btn-info" href="#createModel" role="button" data-toggle="modal">添加书签</a></th>
-    </tr>
-    <tr>
-      <th>序号</th>
-      <th>类别</th>
-      <th>描述</th>
-      <th>网址</th>
-      <th>加入日期</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% bookmarks.each_with_index do |bm,i| %>
-    <tr>
-      <td><%= i %></td>
-      <td style="display:none"><%= bm["objectId"] %></td>
-      <td><%= bm["group"] %></td>
-      <td><%= bm["desc"] %></td>
-      <td>
-        <a href="<%= bm["url"] %>" target="_blank">
-          <%= bm["url"] %>
+
+  <div class="row">
+      <% bookmarks.each_with_index do |bm,i| %>
+    <div class="col-sm-6 col-md-3">
+      <div class="thumbnail">
+        <input id="objectId" class="hidden" value="<% bm["objectId"] %>" />
+        <a id="url" href="<%= bm["url"] %>" target="_blank">
+          <img src="http://immediatenet.com/t/l?Size=1024x768&URL=<%= bm["url"] %>"/>
         </a>
-      </td>
-      <td><%= bm["createdAt"].slice(0,10) %></td>
-      <td>
-        <a class="editModelBtn" href="#editModel" role="button" data-toggle="modal">
-          <i class="icon-edit"></i>
-        </a>
-      </td>
-      <td>
-        <a class="deleteModelBtn" href="#deleteModel" role="button" data-toggle="modal">
-          <i class="icon-remove"></i>
-        </a>
-      </td>
-    </tr>
+        <div class="caption">
+          <h4 id="desc"><%= bm["desc"] %></h4>
+          <p id="group">类别:<%= bm["group"] %></p>
+          <p>创建时间:<%= bm["createdAt"].slice(0,10) %></p>
+          <p>
+            <a class="btn btn-success editModelBtn" href="#editModel" role="button" data-toggle="modal">
+              <span class="glyphicon glyphicon-edit"></span>
+            </a>
+            <a class="btn btn-default deleteModelBtn" href="#deleteModel" role="button" data-toggle="modal">
+               <span class="glyphicon glyphicon-fire"></span>
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
     <% end %>
-  </tbody>
-</table>
+  </div>
+
 
 <!-- Modal -->
 <div id="createModel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -130,16 +109,17 @@
   $(document).ready(function() {
     $('.editModelBtn').on('click', function(event) {
       event.preventDefault();
-      var cells = $(this).closest('tr').find('td');
-      $('#editModel #objectId').val(cells[1].innerHTML);
-      $('#editModel #group').val(cells[2].innerHTML);
-      $('#editModel #desc').val(cells[3].innerHTML);
-      $('#editModel #url').val(cells[4].text);
+      var thumbnail = $(this).closest('.thumbnail');
+      $('#editModel #objectId').val($(thumbnail).find('#objectId')[0].value);
+      $('#editModel #group').val($(thumbnail).find('#group')[0].innerHTML);
+      $('#editModel #desc').val($(thumbnail).find('#desc')[0].innerHTML);
+      $('#editModel #url').val($(thumbnail).find('#url')[0].innerHTML);
     });
     $('.deleteModelBtn').on('click', function(event) {
       event.preventDefault();
-      var cells = $(this).closest('tr').find('td');
-      $('#deleteModel #objectId').val(cells[1].innerHTML);
+      var cells = $(this).closest('thumbnail').find('td');
+      var thumbnail = $(this).closest('.thumbnail');
+      $('#deleteModel #objectId').val($(thumbnail).find('#objectId')[0].value);
     });
 
     $('.btn.btn-primary.submit-trigger').on('click', function(event) {
