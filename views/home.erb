@@ -1,30 +1,28 @@
-
-  <div class="row">
-      <% bookmarks.each_with_index do |bm,i| %>
-    <div class="col-sm-6 col-md-3">
-      <div class="thumbnail">
-        <input id="objectId" class="hidden" value="<% bm["objectId"] %>" />
-        <a id="url" href="<%= bm["url"] %>" target="_blank">
-          <img src="http://immediatenet.com/t/l?Size=1024x768&URL=<%= bm["url"] %>"/>
-        </a>
-        <div class="caption">
-          <h4 id="desc"><%= bm["desc"] %></h4>
-          <p id="group">类别:<%= bm["group"] %></p>
-          <p>创建时间:<%= bm["createdAt"].slice(0,10) %></p>
-          <p>
-            <a class="btn btn-success editModelBtn" href="#editModel" role="button" data-toggle="modal">
-              <span class="glyphicon glyphicon-edit"></span>
-            </a>
-            <a class="btn btn-default deleteModelBtn" href="#deleteModel" role="button" data-toggle="modal">
-               <span class="glyphicon glyphicon-fire"></span>
-            </a>
-          </p>
-        </div>
+<div class="row">
+    <% bookmarks.each_with_index do |bm,i| %>
+  <div class="col-sm-6 col-md-3">
+    <div class="thumbnail">
+      <input id="objectId" class="hidden" value="<% bm["objectId"] %>" />
+      <a id="url" href="<%= bm["url"] %>" target="_blank">
+        <img src="http://immediatenet.com/t/l?Size=1024x768&URL=<%= bm["url"] %>"/>
+      </a>
+      <div class="caption">
+        <h4 id="desc"><%= bm["desc"] %></h4>
+        <p id="group">类别:<%= bm["group"] %></p>
+        <p>创建时间:<%= bm["createdAt"].slice(0,10) %></p>
+        <p>
+          <a class="btn btn-success editModelBtn" href="#" role="button" data-toggle="editModel">
+            <span class="glyphicon glyphicon-edit"></span>
+          </a>
+          <a class="btn btn-default deleteModelBtn" href="#" role="button" data-toggle="deleteModel">
+             <span class="glyphicon glyphicon-fire"></span>
+          </a>
+        </p>
       </div>
     </div>
-    <% end %>
   </div>
-
+  <% end %>
+</div>
 
 <!-- Modal -->
 <div id="createModel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -114,12 +112,14 @@
       $('#editModel #group').val($(thumbnail).find('#group')[0].innerHTML);
       $('#editModel #desc').val($(thumbnail).find('#desc')[0].innerHTML);
       $('#editModel #url').val($(thumbnail).find('#url')[0].innerHTML);
+      $('#editModel').modal();
     });
     $('.deleteModelBtn').on('click', function(event) {
       event.preventDefault();
       var cells = $(this).closest('thumbnail').find('td');
       var thumbnail = $(this).closest('.thumbnail');
       $('#deleteModel #objectId').val($(thumbnail).find('#objectId')[0].value);
+      $('#deleteModel').modal();
     });
 
     $('.btn.btn-primary.submit-trigger').on('click', function(event) {
