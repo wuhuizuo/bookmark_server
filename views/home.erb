@@ -118,7 +118,7 @@
       $('#editModel #objectId').val($(thumbnail).find('#objectId')[0].value);
       $('#editModel #group').val($(thumbnail).find('#group')[0].innerHTML);
       $('#editModel #desc').val($(thumbnail).find('#desc')[0].innerHTML);
-      $('#editModel #url').val($(thumbnail).find('#url')[0].innerHTML);
+      $('#editModel #url').val($($(thumbnail).find('#url')[0]).attr("href"));
     });
     $('.deleteModelBtn').on('click', function(event) {
       event.preventDefault();
