@@ -11,10 +11,10 @@
         <p id="group">类别:<%= bm["group"] %></p>
         <p>创建时间:<%= bm["createdAt"].slice(0,10) %></p>
         <p>
-          <a class="btn btn-success editModelBtn" href="#" role="button" data-toggle="editModel">
+          <a class="btn btn-success editModelBtn" href="#" role="button" data-toggle="modal">
             <span class="glyphicon glyphicon-edit"></span>
           </a>
-          <a class="btn btn-default deleteModelBtn" href="#" role="button" data-toggle="deleteModel">
+          <a class="btn btn-default deleteModelBtn" href="#" role="button" data-toggle="modal">
              <span class="glyphicon glyphicon-fire"></span>
           </a>
         </p>
@@ -51,55 +51,62 @@
   </div>
 </div>
 <!-- Modal -->
-<div id="editModel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-      ×
-    </button>
-    <h3 id="myModalLabel">编辑书签</h3>
-  </div>
-  <div class="modal-body">
-    <p></p>
-    <form class="form-signin" method="POST" action="/edit">
-      <input type="hidden" id="objectId" name="objectId" >
-      <input id="group" name="group" type="text" class="input-block-level" placeholder="书签分组">
-      <input id="desc" name="desc" type="text" class="input-block-level" placeholder="描述">
-      <input id="url" name="url" type="text" class="input-block-level" placeholder="URL">
-    </form>
 
-  </div>
-  <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">
-      取消
-    </button>
-    <button class="btn btn-primary submit-trigger">
-      保存
-    </button>
+<div id="editModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+        ×
+      </button>
+      <h3 id="myModalLabel">编辑书签</h3>
+    </div>
+    <div class="modal-body">
+      <p></p>
+      <form class="form-signin" method="POST" action="/edit">
+        <input type="hidden" id="objectId" name="objectId" >
+        <input id="group" name="group" type="text" class="input-block-level" placeholder="书签分组">
+        <input id="desc" name="desc" type="text" class="input-block-level" placeholder="描述">
+        <input id="url" name="url" type="text" class="input-block-level" placeholder="URL">
+      </form>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">
+        取消
+      </button>
+      <button class="btn btn-primary submit-trigger">
+        保存
+      </button>
+    </div>
   </div>
 </div>
 <!-- Modal -->
-<div id="deleteModel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-      ×
-    </button>
-    <h3 id="myModalLabel">删除书签</h3>
-  </div>
-  <div class="modal-body">
-    <p>
-      确定删除该书签么？
-    </p>
-    <form class="form-signin" method="POST" action="/destroy">
-      <input type="hidden" id="objectId" name="objectId" >
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">
-      取消
-    </button>
-    <button class="btn btn-primary submit-trigger">
-      确定
-    </button>
+<div id="deleteModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          ×
+        </button>
+        <h3 id="myModalLabel">删除书签</h3>
+      </div>
+      <div class="modal-body">
+        <p>
+          确定删除该书签么？
+        </p>
+        <form class="form-signin" method="POST" action="/destroy">
+          <input type="hidden" id="objectId" name="objectId" >
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">
+          取消
+        </button>
+        <button class="btn btn-primary submit-trigger">
+          确定
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -112,14 +119,12 @@
       $('#editModel #group').val($(thumbnail).find('#group')[0].innerHTML);
       $('#editModel #desc').val($(thumbnail).find('#desc')[0].innerHTML);
       $('#editModel #url').val($(thumbnail).find('#url')[0].innerHTML);
-      $('#editModel').modal();
     });
     $('.deleteModelBtn').on('click', function(event) {
       event.preventDefault();
       var cells = $(this).closest('thumbnail').find('td');
       var thumbnail = $(this).closest('.thumbnail');
       $('#deleteModel #objectId').val($(thumbnail).find('#objectId')[0].value);
-      $('#deleteModel').modal();
     });
 
     $('.btn.btn-primary.submit-trigger').on('click', function(event) {
