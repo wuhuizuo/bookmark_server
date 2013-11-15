@@ -11,12 +11,12 @@
         <p id="group">类别:<%= bm["group"] %></p>
         <p>创建时间:<%= bm["createdAt"].slice(0,10) %></p>
         <p>
-          <a class="btn btn-success editModelBtn" href="#" role="button" data-toggle="modal">
+          <button class="btn btn-success editModelBtn" data-toggle="modal" data-target="#editModel">
             <span class="glyphicon glyphicon-edit"></span>
-          </a>
-          <a class="btn btn-default deleteModelBtn" href="#" role="button" data-toggle="modal">
-             <span class="glyphicon glyphicon-fire"></span>
-          </a>
+          </button>
+          <button class="btn btn-success deleteModelBtn" data-toggle="modal" data-target="#deleteModel">
+            <span class="glyphicon glyphicon-fire"></span>
+          </button>
         </p>
       </div>
     </div>
