@@ -1,8 +1,36 @@
+
 <div class="jumbotron">
-  <h1>Open的个人书签服务器</h1>
-  <li>存储在免费的云上。</li>
-  <li>不限空间。</li>
-  <li>任何一处一致性使用。</li>
-  <li>自助注册使用,OPEN For everyone。</li>
-  <a class="btn btn-large btn-success" href="/signup">立即创建帐号</a>
+  <div class="row">
+    <div class="col-xs-6">
+      <h1>Cloud BookMarks</h1>
+      <ul>
+        <li>Store on cloud.</li>
+        <li>No-limited space.</li>
+        <li>Use in anywhere,olny need network.</li>
+        <li>Are you ready?</li>
+      </ul>
+
+      <fieldset>
+      <form method="POST" action="/signup" id="frm-signup">
+
+        <div class="row">
+          <div class="col-xs-6">
+            E-MAIL ADDRESS
+            <input type="text" class="form-control">
+            PASSWORD
+            <input name="password" type="password" class="form-control">
+          </div>
+          <div class="col-xs-6">
+            USERNAME
+            <input name="username" type="text" class="form-control">
+            <div id="signup-error"></div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+          </div>
+        </div>
+      </form>
+      </fieldset>
+    </div>
+    <div class="col-xs-6">
+    </div>
+  </div>
 </div>

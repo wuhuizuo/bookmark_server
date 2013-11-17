@@ -1,120 +1,116 @@
 #encoding:utf-8
-require 'sinatra'
 require 'thin'
-require 'parse-ruby-client'
 require 'yaml'
+require 'sinatra'
+require 'parse-ruby-client'
+require './lib/helper'
 
-SERV_CFG = YAML.load_file('parseapi.yml')
-OBJECT_NAME = SERV_CFG[:object_name]
-Parse.init :application_id => SERV_CFG[:application_id],
-:api_key        => SERV_CFG[:rest_api_key]
+class BMServer < Sinatra::Application
+  set :public_folder, File.dirname(__FILE__) + '/static'
+  enable :sessions
+  helpers BMServerHelper
 
-set :public_folder, File.dirname(__FILE__) + '/static'
-enable :sessions
-
-get '/' do
-  erb :index
-end
-
-
-
-get '/index' do
-  erb :index
-end
-
-get '/home' do
-  if session[:user].nil?
-    redirect "/signin"
-  end
-  objectId = session[:user]["objectId"]
-  bookmark_query = Parse::Query.new(SERV_CFG[:object_name])
-  bookmark_query.eq("owner", session[:user]["username"])
-  bookmarks = bookmark_query.get
-
-  erb :home, :locals => {:bookmarks => bookmarks}
-end
-
-# signup
-get '/signup' do
-  erb :signup
-end
-
-post '/signup' do
-  name, password = params[:username], params[:password]
-  confirm_password = params[:confirm_password]
-  if name.empty? or
-  password.empty? or
-  confirm_password.empty? or
-  password != confirm_password
-    return erb :signup
+  def initialize
+    super
+    @serv_cfg = YAML.load_file('conf/parseapi.yml')
+    Parse.init :application_id => @serv_cfg[:application_id], :api_key => @serv_cfg[:rest_api_key]
   end
 
-  user = Parse::User.new({"username" => name, "password" => password})
-  begin
-    result = user.save
-    session[:user] = result
-    redirect "/home"
-  rescue Parse::ParseProtocolError => e
-    if e.error =~ %r<username\s*#{name}\s*already\s*taken>
-      "用户名已存在,请找另外一个名字吧^..^....<a href='/signup'>返回</a>"
+
+
+  ['/', '/index'].each do |url|
+    get url do
+      erb :index
     end
   end
 
+  get '/tags' do
+    ensure_logged_in do
+      tag_query = Parse::Query.new(@serv_cfg[:tag_name])
+      tags = tag_query.eq("owner", session[:user]["username"]).get
+      erb :tags, :locals => {:tags => tags}
+    end
+  end
 
-end
+  post '/tags' do
+    op_tag(@serv_cfg[:tag_name], params)
+    redirect '/tags'
+  end
 
-# log in
-get '/signin' do
-  erb :signin
-end
+  get '/bookmarks' do
+    ensure_logged_in do
+      request_tag,request_keyword = params[:tag],  params[:search]
 
-post '/signin' do
-  name, password = params[:username], params[:password]
-  return erb :signin if name.empty? || password.empty?
-  begin
-    user = Parse::User.authenticate(name, password)
-    session[:user] = user
-    redirect "/home"
-  rescue Parse::ParseProtocolError
-    "用户名或者密码错误^,^'<a href='/signin'>返回</a>"
+      if request_tag
+        bms = get_bms_by_tag(@serv_cfg[:bm_name], @serv_cfg[:tag_name], request_tag)
+      else
+        bookmark_query = Parse::Query.new(@serv_cfg[:bm_name])
+        bookmark_query.eq("owner", session[:user]["username"])
+        bms = bookmark_query.get
+      end
+
+      #search
+      bms = get_bms_by_keyword(bms, request_keyword) if request_keyword
+
+      erb :bookmarks, :locals => {:bookmarks => bms}
+    end
+  end
+
+  post '/signup' do
+    name, password = params[:username], params[:password]
+    confirm_password = params[:confirm_password]
+    if name.empty? or
+      password.empty? or
+      confirm_password.empty? or
+      password != confirm_password
+
+      erb :index, :locals => {:message => gen_message("sign up data error!", "danger")}
+    end
+
+    user = Parse::User.new({"username" => name, "password" => password})
+    begin
+      result = user.save
+      session[:user] = result
+      redirect "/bookmarks"
+    rescue Parse::ParseProtocolError => e
+      if e.error =~ %r<username\s*#{name}\s*already\s*taken>
+        erb :index, :locals => {:message => gen_message("用户名已存在,请找另外一个名字吧^..^....", "danger")}
+      end
+    end
+  end
+
+  post '/signin' do
+    name, password = params[:username], params[:password]
+    return erb :index if name.empty? || password.empty?
+    begin
+      user = Parse::User.authenticate(name, password)
+      session[:user] = user
+      redirect "/bookmarks"
+    rescue Parse::ParseProtocolError
+      erb :index, :locals => {:message => gen_message("用户名或者密码错误^,^", "danger")}
+    end
+  end
+
+  # signout
+  get '/signout' do
+    session.clear
+    redirect "/"
+  end
+
+  post '/add' do
+    add_bm(@serv_cfg[:bm_name], @serv_cfg[:tag_name], params)
+    redirect "/bookmarks"
+  end
+
+  post '/edit' do
+    edit_bm(@serv_cfg[:bm_name], @serv_cfg[:tag_name], params)
+    redirect "/bookmarks"
+  end
+
+  post '/destroy' do
+    del_bm(@serv_cfg[:bm_name], @serv_cfg[:tag_name], params)
+    redirect "/bookmarks"
   end
 end
 
-# signout
-get '/signout' do
-  session.clear
-  redirect "/index"
-end
-
-post '/create' do
-  url = params[:url]
-  desc = params[:desc]
-  group = params[:group]
-  user = session[:user]["username"]
-  Parse::Object.new(OBJECT_NAME, {
-    "url" => url,
-    "desc" => desc,
-    "group" => group,
-    "owner" => user
-  }
-  ).save
-
-  redirect "/home"
-end
-
-post '/edit' do
-  item = Parse::Query.new(OBJECT_NAME).
-  eq("objectId", params[:objectId]).get.first
-  item["url"] = params[:url]
-  item["desc"] = params[:desc]
-  item["group"] = params[:group]
-  item.save if item
-  redirect "/home"
-end
-
-post '/destroy' do
-  item = Parse::Query.new(OBJECT_NAME).
-  eq("objectId", params[:objectId]).get.first
-  item.parse_delete if item
-  redirect "/home"
-end
+BMServer.run!

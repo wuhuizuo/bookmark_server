@@ -36,20 +36,32 @@
                     <div class="input-group">
                       <input class="form-control" type="text" placeholder="Search bookmarks" name="search">
                       <span class="input-group-btn">
-                        <button class="btn btn-default" type="submit">Search!</button>
+                        <button class="btn btn-default" type="submit">
+                          <span class="glyphicon glyphicon-search"></span>
+                        </button>
                       </span>
                     </div>
                   </form>
                 </div>
               </div>
               <div class="btn-group">
-                <a href="/home" class="btn btn-success">manager</a>
-                <a href="/add_bookmark" class="btn btn-success" >add a bookmark</a>
-                <a href="/account" class="btn btn-success">my account</a>
+                <a href="/tags" class="btn btn-success">
+                  <span class="glyphicon glyphicon-tags"></span>
+                </a>
+                <a href="/bookmarks" class="btn btn-success">
+                  <span class="glyphicon glyphicon-th-list"></span>
+                </a>
+                <button class="btn btn-success createModelBtn" data-toggle="modal" data-target="#createModel">
+                  <span class="glyphicon glyphicon-plus-sign"></span>
+                </button>
+                <a href="/account" class="btn btn-success">
+                  <span class="glyphicon glyphicon-user"></span>
+                </a>
               </div>
               <div class="btn-group">
                 <a href="/signout" class="btn btn-success">
-                  logout<span class="badge"><%= session[:user]["username"]%></span>
+                  <span class="glyphicon glyphicon-log-out"></span>
+                  <span class="badge"><%= session[:user]["username"]%></span>
                 </a>
               </div>
             </div>
@@ -69,8 +81,10 @@
       </div>
     </div>
 <!-- for page content -->
+
     <div class="container">
-      <%= yield %>
+      <%= message if defined?(message) %>
+      <%= yield if block_given? %>
     </div>
   </div>
 
@@ -79,6 +93,5 @@
       <p class="text-muted credit">Created by <a href="mailto:wuhuizuo@126.com">wuhuizuo@126.com</a> Copyright © 2013 <a href="http://www.darkzuo.com/">Darkzuo.Net</a>. All rights reserved.
     </div>
   </div>
-
 </body>
 </html>
