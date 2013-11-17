@@ -1,0 +1,52 @@
+<div class="row show-grid">
+  <% tags.each do |tag| %>
+      <a class="btn btn-default"href="/bookmarks?tag=<%= tag["name"]%>" >
+        <span class="glyphicon glyphicon-tag"></span>
+        <b><%= tag["name"] %></b>
+        <span class="badge"><%= tag["bookmark_ids"].length %></span>
+      </a>
+  <% end %>
+</div>
+
+<!-- Modal -->
+<div id="createModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Add a tag</h3>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="/tags">
+          Name:
+          <input id="tag_name" name="tag_name" type="text" class="form-control">
+          Description:
+          <input id="desc" name="desc" type="text" class="form-control">
+          <input name="op" type="text" value="add" class="hidden">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">
+          取消
+        </button>
+        <button class="btn btn-primary submit-trigger">
+          保存
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('.btn.btn-primary.submit-trigger').on('click', function(event) {
+      $(this).parent().prev('.modal-body').find('form').submit();
+    });
+  });
+</script>
+
+
+
+
+
+

@@ -1,0 +1,136 @@
+<div class="row">
+    <% bookmarks.each do |bm| %>
+  <div class="col-xs-3">
+    <div class="thumbnail">
+      <input id="objectId" class="hidden" value="<%= bm.parse_object_id %>" />
+      <a id="url" href="<%= bm["url"] %>" target="_blank">
+        <img src="http://immediatenet.com/t/l?Size=1024x768&URL=<%= bm["url"] %>"/>
+      </a>
+      <div class="caption">
+        <h4 id="desc"><%= bm["desc"] %></h4>
+        <p id="group">类别:<%= bm["group"] %></p>
+        <p>创建时间:<%= bm["createdAt"].slice(0,10) %></p>
+        <p>
+          <button class="btn btn-success editModelBtn" data-toggle="modal" data-target="#editModel">
+            <span class="glyphicon glyphicon-edit"></span>
+          </button>
+          <button class="btn btn-success deleteModelBtn" data-toggle="modal" data-target="#deleteModel">
+            <span class="glyphicon glyphicon-fire"></span>
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+  <% end %>
+</div>
+
+<!-- Modal -->
+<div id="createModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">书添加签</h3>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="/add">
+          Description:
+          <input id="desc" name="desc" type="text" class="form-control">
+          URL:
+          <input id="url" name="url" type="text" class="form-control">
+          Tags:
+          <input id="group" name="group" type="text" class="form-control">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">
+          取消
+        </button>
+        <button class="btn btn-primary submit-trigger">
+          保存
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+
+<div id="editModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">编辑书签</h3>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="/edit">
+          <input class="hidden" id="objectId" name="objectId" >
+          Description:
+          <input id="desc" name="desc" type="text" class="form-control">
+          URL:
+          <input id="url" name="url" type="text" class="form-control">
+          Tags:
+          <input id="group" name="group" type="text" class="form-control">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">
+          取消
+        </button>
+        <button class="btn btn-primary submit-trigger">
+          保存
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div id="deleteModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">删除书签</h3>
+      </div>
+      <div class="modal-body">
+        <p>
+          确定删除该书签么？
+        </p>
+        <form class="form-signin" method="POST" action="/destroy">
+          <input class="hidden" id="objectId" name="objectId" >
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">
+          取消
+        </button>
+        <button class="btn btn-primary submit-trigger">
+          确定
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('.editModelBtn').on('click', function(event) {
+      event.preventDefault();
+      var thumbnail = $(this).closest('.thumbnail');
+      $('#editModel #objectId').val($(thumbnail).find('#objectId')[0].value);
+      $('#editModel #group').val($(thumbnail).find('#group')[0].innerHTML);
+      $('#editModel #desc').val($(thumbnail).find('#desc')[0].innerHTML);
+      $('#editModel #url').val($($(thumbnail).find('#url')[0]).attr("href"));
+    });
+    $('.deleteModelBtn').on('click', function(event) {
+      event.preventDefault();
+      var cells = $(this).closest('thumbnail').find('td');
+      var thumbnail = $(this).closest('.thumbnail');
+      $('#deleteModel #objectId').val($(thumbnail).find('#objectId')[0].value);
+    });
+
+    $('.btn.btn-primary.submit-trigger').on('click', function(event) {
+      $(this).parent().prev('.modal-body').find('form').submit();
+    });
+  });
+</script>
