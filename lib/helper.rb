@@ -34,7 +34,7 @@ module BMServerHelper
     when "del"
       tag.parse_delete if tag
     when "del_bm"
-      if op_params[:bm_id]
+      if op_params[:bm_id] and tag
         tag["bookmark_ids"].delete op_params[:bm_id]
       end
     when "edit"
@@ -52,9 +52,10 @@ module BMServerHelper
         tag.save
       end
     when "add_bm"
-      if op_params[:bm_id]
+      if op_params[:bm_id] and tag
         tag["bookmark_ids"].push op_params[:bm_id]
         tag["bookmark_ids"].uniq!
+        tag.save
       end
     end
 
@@ -70,12 +71,15 @@ module BMServerHelper
       "url" => op_params[:url],
       "desc" => op_params[:desc],
       "tags" => tags,
-      "owner" => user
+      "owner" => owner
     }).save
 
     #update the tags
-    tag_params = {:tag_name => t, :op => "add_bm", :bm_id => bm.parse_object_id}
-    tags.each{|t| op_tag(tag_table_name, tag_params) }
+    tag_params = {:tag_name => "", :op => "add_bm", :bm_id => bm.parse_object_id}
+    tags.each do |t|
+      tag_params[:tag_name] = t
+      op_tag(tag_table_name, tag_params)
+    end
   end
 
   def del_bm(bm_table_name, tag_table_name, op_params)
@@ -100,6 +104,7 @@ module BMServerHelper
   end
 
   def get_bms_by_keyword(bms, keyword)
+    return bms unless keyword =~ /\w+/
     bms.select do |b|
       b["url"].include? keyword or
       b["desc"].include? keyword or
@@ -112,11 +117,16 @@ module BMServerHelper
       q.eq("owner", session[:user]["username"])
       q.eq("name", tag_name)
     end.get.first
-    bm_ids = tag["bookmark_ids"] || []
-
-    Parse::Query.new(bm_table_name).tap do |q|
-      q.eq("owner", session[:user]["username"])
-      q.value_in("objectId", bm_ids)
-    end.get
+    unless tag
+      @head_message[session[:user]["username"]] = gen_message("对不起,找不到书签:#{tag_name}.", "warning")
+      []
+    else
+      bm_ids = tag["bookmark_ids"] || []
+      return [] if bm_ids.length <= 0
+      Parse::Query.new(bm_table_name).tap do |q|
+        q.eq("owner", session[:user]["username"])
+        q.value_in("objectId", bm_ids)
+      end.get
+    end
   end
 end

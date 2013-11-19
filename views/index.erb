@@ -9,28 +9,45 @@
         <li>Use in anywhere,olny need network.</li>
         <li>Are you ready?</li>
       </ul>
-
-      <fieldset>
-      <form method="POST" action="/signup" id="frm-signup">
-
-        <div class="row">
-          <div class="col-xs-6">
-            E-MAIL ADDRESS
-            <input type="text" class="form-control">
-            PASSWORD
-            <input name="password" type="password" class="form-control">
-          </div>
-          <div class="col-xs-6">
-            USERNAME
-            <input name="username" type="text" class="form-control">
-            <div id="signup-error"></div>
-            <button type="submit" class="btn btn-success">Sign in</button>
-          </div>
-        </div>
-      </form>
-      </fieldset>
+      <button class="btn btn-success btn-lg" data-toggle="modal" data-target="#signupModal">Create An Acount</button>
     </div>
     <div class="col-xs-6">
     </div>
   </div>
 </div>
+
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="/signup">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="myModalLabel">Create An Account</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="signup_email">Email address</label>
+            <input type="email" class="form-control" name="email" id="signup_email" placeholder="Enter email">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Username</label>
+            <input type="text" class="form-control" name="username" id="signup_username" placeholder="Enter username">
+          </div>
+          <div class="form-group">
+            <label for="signup_password">Password</label>
+            <input type="password" class="form-control" name="password" id="signup_password" placeholder="Enter password">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+

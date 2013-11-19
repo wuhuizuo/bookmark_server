@@ -14,6 +14,7 @@ class BMServer < Sinatra::Application
     super
     @serv_cfg = YAML.load_file('conf/parseapi.yml')
     Parse.init :application_id => @serv_cfg[:application_id], :api_key => @serv_cfg[:rest_api_key]
+    @head_message = {}
   end
 
 
@@ -57,24 +58,20 @@ class BMServer < Sinatra::Application
   end
 
   post '/signup' do
-    name, password = params[:username], params[:password]
-    confirm_password = params[:confirm_password]
-    if name.empty? or
-      password.empty? or
-      confirm_password.empty? or
-      password != confirm_password
-
-      erb :index, :locals => {:message => gen_message("sign up data error!", "danger")}
-    end
-
-    user = Parse::User.new({"username" => name, "password" => password})
-    begin
-      result = user.save
-      session[:user] = result
-      redirect "/bookmarks"
-    rescue Parse::ParseProtocolError => e
-      if e.error =~ %r<username\s*#{name}\s*already\s*taken>
-        erb :index, :locals => {:message => gen_message("用户名已存在,请找另外一个名字吧^..^....", "danger")}
+    email, name, password = params[:email], params[:username], params[:password]
+    unless name =~ /\w+/ && password =~ /\w+/
+      erb :index, :locals => {:message => gen_message("Length of username or password must > 0 !", "danger")}
+    else
+      user = Parse::User.new({"username" => name, "password" => password, "email" => email})
+      begin
+        result = user.save
+        session[:user] = result
+        @head_message[name] = gen_message("Signup success.", "success")
+        redirect "/"
+      rescue Parse::ParseProtocolError => e
+        if e.error =~ %r<username\s*#{name}\s*already\s*taken>
+          erb :index, :locals => {:message => gen_message("用户名已存在,请找另外一个名字吧^..^....", "danger")}
+        end
       end
     end
   end
@@ -85,7 +82,8 @@ class BMServer < Sinatra::Application
     begin
       user = Parse::User.authenticate(name, password)
       session[:user] = user
-      redirect "/bookmarks"
+      @head_message[name] = gen_message("Login success.", "success")
+      redirect "/"
     rescue Parse::ParseProtocolError
       erb :index, :locals => {:message => gen_message("用户名或者密码错误^,^", "danger")}
     end

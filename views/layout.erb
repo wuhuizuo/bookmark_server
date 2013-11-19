@@ -10,7 +10,7 @@
   <!-- Le styles -->
   <link href="/css/bootstrap.css" rel="stylesheet">
   <link href="/css/sticky-footer-navbar.css" rel="stylesheet">
-  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script src="/js/jquery.js"></script>
   <script src="/js/bootstrap.js"></script>
 </head>
 <body>
@@ -83,7 +83,12 @@
 <!-- for page content -->
 
     <div class="container">
-      <%= message if defined?(message) %>
+      <%= (message if message) if defined?(message) %>
+      <% if session[:user] && @head_message[session[:user]["username"]] %>
+        <%= @head_message[session[:user]["username"]] %>
+        <% @head_message[session[:user]["username"]] = nil %>
+      <% end %>
+
       <%= yield if block_given? %>
     </div>
   </div>

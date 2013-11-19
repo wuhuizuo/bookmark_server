@@ -8,7 +8,7 @@
       </a>
       <div class="caption">
         <h4 id="desc"><%= bm["desc"] %></h4>
-        <p id="group">类别:<%= bm["group"] %></p>
+        <p>类别:<span id="tags"><%= bm["tags"].join(";") %></span></p>
         <p>创建时间:<%= bm["createdAt"].slice(0,10) %></p>
         <p>
           <button class="btn btn-success editModelBtn" data-toggle="modal" data-target="#editModel">
@@ -38,8 +38,8 @@
           <input id="desc" name="desc" type="text" class="form-control">
           URL:
           <input id="url" name="url" type="text" class="form-control">
-          Tags:
-          <input id="group" name="group" type="text" class="form-control">
+          Tags(以分号间隔):
+          <input id="tags" name="tags" type="text" class="form-control">
         </form>
       </div>
       <div class="modal-footer">
@@ -69,8 +69,8 @@
           <input id="desc" name="desc" type="text" class="form-control">
           URL:
           <input id="url" name="url" type="text" class="form-control">
-          Tags:
-          <input id="group" name="group" type="text" class="form-control">
+          Tags(以分号间隔):
+          <input id="tags" name="tags" type="text" class="form-control">
         </form>
       </div>
       <div class="modal-footer">
@@ -96,7 +96,7 @@
         <p>
           确定删除该书签么？
         </p>
-        <form class="form-signin" method="POST" action="/destroy">
+        <form method="POST" action="/destroy">
           <input class="hidden" id="objectId" name="objectId" >
         </form>
       </div>
@@ -118,7 +118,7 @@
       event.preventDefault();
       var thumbnail = $(this).closest('.thumbnail');
       $('#editModel #objectId').val($(thumbnail).find('#objectId')[0].value);
-      $('#editModel #group').val($(thumbnail).find('#group')[0].innerHTML);
+      $('#editModel #tags').val($(thumbnail).find('#tags')[0].innerHTML);
       $('#editModel #desc').val($(thumbnail).find('#desc')[0].innerHTML);
       $('#editModel #url').val($($(thumbnail).find('#url')[0]).attr("href"));
     });
