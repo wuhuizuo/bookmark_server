@@ -4,5 +4,5 @@ require 'bundler'
 
 Bundler.require
 
-require "./lib/main"
+require_relative 'main.rb'
 run Sinatra::Application
