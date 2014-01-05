@@ -3,8 +3,7 @@ require 'thin'
 require 'yaml'
 require 'sinatra'
 require 'parse-ruby-client'
-require './lib/helper'
-#helo
+require_relative 'lib/helper'
 
 class BMServer < Sinatra::Application
   set :public_folder, File.dirname(__FILE__) + '/static'

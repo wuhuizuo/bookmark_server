@@ -1,44 +1,40 @@
-<div class="row">
-  <% bookmarks.each do |bm| %>
-      <div class="col-xs-3">
-        <div class="thumbnail">
-          <input id="objectId" class="hidden" value="<%= bm.parse_object_id %>"/>
-          <a id="url" href="<%= bm["url"] %>" target="_blank">
-            <img src="http://immediatenet.com/t/l?Size=1024x768&URL=<%= bm["url"] %>"/>
+<% bookmarks.each do |bm| %>
+      <div class="bookmark">
+        <input id="bm_id" class="hidden" value="<%= bm.parse_object_id %>"/>
+        <div class='thumbnail'>
+          <a  href="<%= bm["url"] %>" target="_blank">
+            <img src="http://immediatenet.com/t/l?Size=1024x768&URL=<%= bm["url"] %>">
           </a>
-
-          <div class="caption">
-            <h4 id="desc"><%= bm["desc"] %></h4>
-
-            <p>类别:<span id="tags"><%= bm["tags"].join(";") %></span></p>
-
-            <p>创建时间:<%= bm["createdAt"].slice(0, 10) %></p>
-
-            <p>
-              <button class="btn btn-success editModelBtn" data-toggle="modal" data-target="#editModel">
-                <span class="glyphicon glyphicon-edit"></span>
-              </button>
-              <button class="btn btn-success deleteModelBtn" data-toggle="modal" data-target="#deleteModel">
-                <span class="glyphicon glyphicon-fire"></span>
-              </button>
-            </p>
-          </div>
+        </div>
+        <div class='desc'>
+          <a id="url" href="<%= bm["url"] %>" target="_blank">
+            <label id='desc'><%= bm["desc"] %></label>
+          </a>
+        </div>
+        <div class='bookmark_footer'>
+        <span class="glyphicon glyphicon-tag"> </span><span id="tags"><%= bm["tags"].join(";") %></span>
+        <br>
+        <span class="glyphicon glyphicon-calendar"> </span><span><%= bm["createdAt"].slice(0, 10) %></span>
+        <span class='editdelete'>
+          <a href="#" class="edit" data-toggle="modal" data-target="#editModel"><span class="glyphicon glyphicon-edit">edit</span></a>
+          /
+          <a href="#" class="delete" data-toggle="modal" data-target="#deleteModel"><span class="glyphicon glyphicon-trash"></span>delete</a>
+        </span>
         </div>
       </div>
-  <% end %>
-</div>
+<% end %>
+
 
 <!-- Modal -->
 <div id="createModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
+  <div class="modal-dialog">    <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="myModalLabel">书添加签</h3>
       </div>
       <div class="modal-body">
         <form method="POST" action="/add">
-          Description:
+          Desciption:
           <input id="desc" name="desc" type="text" class="form-control">
           URL:
           <input id="url" name="url" type="text" class="form-control">
@@ -68,7 +64,7 @@
       </div>
       <div class="modal-body">
         <form method="POST" action="/edit">
-          <input class="hidden" id="objectId" name="objectId">
+          <input class="hidden" id="bm_id" name="bm_id">
           Description:
           <input id="desc" name="desc" type="text" class="form-control">
           URL:
@@ -93,7 +89,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <button class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="myModalLabel">删除书签</h3>
       </div>
       <div class="modal-body">
@@ -101,8 +97,8 @@
           确定删除该书签么？
         </p>
 
-        <form method="POST" action="/destroy">
-          <input class="hidden" id="objectId" name="objectId">
+        <form method="POST" action="/destoy">
+          <input class="hidden" id="bm_id" name="bm_id">
         </form>
       </div>
       <div class="modal-footer">
@@ -117,23 +113,21 @@
   </div>
 </div>
 
-<script type="text/javascript">
+<script>
     $(document).ready(function () {
-        $('.editModelBtn').on('click', function (event) {
+        $('.edit').on('click', function (event) {
             event.preventDefault();
-            var thumbnail = $(this).closest('.thumbnail');
-            $('#editModel #objectId').val($(thumbnail).find('#objectId')[0].value);
-            $('#editModel #tags').val($(thumbnail).find('#tags')[0].innerHTML);
-            $('#editModel #desc').val($(thumbnail).find('#desc')[0].innerHTML);
-            $('#editModel #url').val($($(thumbnail).find('#url')[0]).attr("href"));
+            var bookmark = $(this).closest('div.bookmark');
+            $('#editModel #bm_id').val(bookmark.find('#bm_id').val());
+            $('#editModel #tags'    ).val(bookmark.find('#tags'    ).text());
+            $('#editModel #desc'    ).val(bookmark.find('#desc'    ).text());
+            $('#editModel #url'     ).val(bookmark.find('#url'     ).attr("href"));
         });
-        $('.deleteModelBtn').on('click', function (event) {
+        $('.delete').on('click', function (event) {
             event.preventDefault();
-            var thumbnail = $(this).closest('.thumbnail');
-            $('#deleteModel #objectId').val($(thumbnail).find('#objectId')[0].value);
-            alert($('#deleteModel #objectId').val());
+            var bookmark = $(this).closest('div.bookmark');
+            $('#deleteModel #bm_id').val(bookmark.find('#bm_id').val());
         });
-
         $('.btn.btn-primary.submit-trigger').on('click', function (event) {
             $(this).parent().prev('.modal-body').find('form').submit();
         });
