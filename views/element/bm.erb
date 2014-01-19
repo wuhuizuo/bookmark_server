@@ -1,0 +1,23 @@
+<div class="bookmark">
+  <input id="bm_id" class="hidden" value="<%= bm.parse_object_id %>">
+  <div class='thumbnail'>
+    <a href="<%= bm['url'] %>" target="_blank">
+      <img src="http://immediatenet.com/t/l?Size=1024x768&URL=<%= bm['url'] %>">
+    </a>
+  </div>
+  <div class='desc'>
+    <a id="url" href="<%= bm['url'] %>" target="_blank">
+      <label id='desc'><%= bm['desc'] %></label>
+    </a>
+  </div>
+  <div class='bookmark_footer'>
+    <span class="glyphicon glyphicon-tag"> </span><span id="tags"><%= bm['tags'].join(';') %></span>
+    <br>
+    <span class="glyphicon glyphicon-calendar"> </span><span><%= bm['createdAt'].slice(0, 10) %></span>
+        <span class='editdelete'>
+          <a href="#" class="bm_edit" data-toggle="modal" data-target="#bm_dialog"><span class="glyphicon glyphicon-edit">edit</span></a>
+          /
+          <a href="#" class="bm_delete" data-toggle="modal" data-target="#bm_dialog"><span class="glyphicon glyphicon-trash"></span>delete</a>
+        </span>
+  </div>
+</div>

@@ -1,104 +1,24 @@
 <% bookmarks.each do |bm| %>
-      <div class="bookmark">
-        <input id="bm_id" class="hidden" value="<%= bm.parse_object_id %>"/>
-        <div class='thumbnail'>
-          <a  href="<%= bm["url"] %>" target="_blank">
-            <img src="http://immediatenet.com/t/l?Size=1024x768&URL=<%= bm["url"] %>">
-          </a>
-        </div>
-        <div class='desc'>
-          <a id="url" href="<%= bm["url"] %>" target="_blank">
-            <label id='desc'><%= bm["desc"] %></label>
-          </a>
-        </div>
-        <div class='bookmark_footer'>
-        <span class="glyphicon glyphicon-tag"> </span><span id="tags"><%= bm["tags"].join(";") %></span>
-        <br>
-        <span class="glyphicon glyphicon-calendar"> </span><span><%= bm["createdAt"].slice(0, 10) %></span>
-        <span class='editdelete'>
-          <a href="#" class="edit" data-toggle="modal" data-target="#editModel"><span class="glyphicon glyphicon-edit">edit</span></a>
-          /
-          <a href="#" class="delete" data-toggle="modal" data-target="#deleteModel"><span class="glyphicon glyphicon-trash"></span>delete</a>
-        </span>
-        </div>
-      </div>
+    <%= erb :'element/bm', :layout => false, :locals => {:bm => bm} %>
 <% end %>
 
-
-<!-- Modal -->
-<div id="createModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">书添加签</h3>
-      </div>
-      <div class="modal-body">
-        <form method="POST" action="/add">
-          Desciption:
-          <input id="desc" name="desc" type="text" class="form-control">
-          URL:
-          <input id="url" name="url" type="text" class="form-control">
-          Tags(以分号间隔):
-          <input id="tags" name="tags" type="text" class="form-control">
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">
-          取消
-        </button>
-        <button class="btn btn-primary submit-trigger">
-          保存
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal -->
-
-<div id="editModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">编辑书签</h3>
-      </div>
-      <div class="modal-body">
-        <form method="POST" action="/edit">
-          <input class="hidden" id="bm_id" name="bm_id">
-          Description:
-          <input id="desc" name="desc" type="text" class="form-control">
-          URL:
-          <input id="url" name="url" type="text" class="form-control">
-          Tags(以分号间隔):
-          <input id="tags" name="tags" type="text" class="form-control">
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">
-          取消
-        </button>
-        <button class="btn btn-primary submit-trigger">
-          保存
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal -->
-<div id="deleteModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="bm_dialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby='bmLabel' aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">删除书签</h3>
+        <h3 id="bmLabel">书签管理对话框的标题</h3>
       </div>
       <div class="modal-body">
-        <p>
-          确定删除该书签么？
-        </p>
-
-        <form method="POST" action="/destroy">
-          <input class="hidden" id="bm_id" name="bm_id">
+        <form method="POST">
+          <input name="bm_id" class="hidden">
+          <input name="opr" class="hidden">
+          Description:
+          <input name="desc" type="text" class="form-control">
+          URL:
+          <input name="url" type="text" class="form-control">
+          Tags(以分号间隔):
+          <input name="tags" type="text" class="form-control">
         </form>
       </div>
       <div class="modal-footer">
@@ -113,23 +33,9 @@
   </div>
 </div>
 
+<script src="/js/bm.js"></script>
 <script>
     $(document).ready(function () {
-        $('.edit').on('click', function (event) {
-            event.preventDefault();
-            var bookmark = $(this).closest('div.bookmark');
-            $('#editModel #bm_id').val(bookmark.find('#bm_id').val());
-            $('#editModel #tags'    ).val(bookmark.find('#tags'    ).text());
-            $('#editModel #desc'    ).val(bookmark.find('#desc'    ).text());
-            $('#editModel #url'     ).val(bookmark.find('#url'     ).attr("href"));
-        });
-        $('.delete').on('click', function (event) {
-            event.preventDefault();
-            var bookmark = $(this).closest('div.bookmark');
-            $('#deleteModel #bm_id').val(bookmark.find('#bm_id').val());
-        });
-        $('.btn.btn-primary.submit-trigger').on('click', function (event) {
-            $(this).parent().prev('.modal-body').find('form').submit();
-        });
+        init_bm();
     });
 </script>

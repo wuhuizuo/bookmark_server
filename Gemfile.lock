@@ -3,8 +3,8 @@ GEM
   specs:
     daemons (1.1.9)
     eventmachine (1.0.3)
-    iron_core (1.0.1)
-      rest (>= 2.2.0)
+    iron_core (1.0.2)
+      rest (>= 2.6.4)
     iron_mq (4.0.5)
       iron_core (>= 0.5.1)
     mime-types (2.0)
@@ -16,7 +16,7 @@ GEM
     rack (1.5.2)
     rack-protection (1.5.1)
       rack
-    rest (2.6.3)
+    rest (2.6.5)
       net-http-persistent
       rest-client (>= 0.3.0)
     rest-client (1.6.7)

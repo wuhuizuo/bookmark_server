@@ -45,16 +45,13 @@
                   </form>
                 </div>
               </div>
-              <div class="btn-group">
+              <div class="btn-group" id="nav_tool_bar">
                 <a href="/tags" class="btn btn-success">
                   <span class="glyphicon glyphicon-tags"></span>
                 </a>
                 <a href="/bookmarks" class="btn btn-success">
                   <span class="glyphicon glyphicon-th-list"></span>
                 </a>
-                <button class="btn btn-success createModelBtn" data-toggle="modal" data-target="#createModel">
-                  <span class="glyphicon glyphicon-plus-sign"></span>
-                </button>
                 <a href="/account" class="btn btn-success">
                   <span class="glyphicon glyphicon-user"></span>
                 </a>
@@ -62,7 +59,7 @@
               <div class="btn-group">
                 <a href="/signout" class="btn btn-success">
                   <span class="glyphicon glyphicon-log-out"></span>
-                  <span class="badge"><%= session[:user]["username"]%></span>
+                  <span class="badge"><%= session[:user]['username']%></span>
                 </a>
               </div>
             </div>
@@ -85,9 +82,9 @@
 
     <div class="container">
       <%= (message if message) if defined?(message) %>
-      <% if session[:user] && @head_message[session[:user]["username"]] %>
-        <%= @head_message[session[:user]["username"]] %>
-        <% @head_message[session[:user]["username"]] = nil %>
+      <% if session[:user] && @head_message[session[:user]['username']] %>
+        <%= @head_message[session[:user]['username']] %>
+        <% @head_message[session[:user]['username']] = nil %>
       <% end %>
 
       <%= yield if block_given? %>
