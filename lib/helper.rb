@@ -16,9 +16,7 @@ module BMServerHelper
     if session[:user]
       yield if block_given?
     else
-      erb :layout, :layout => false do
-        gen_message('Sorry you are not logged, please login first!', 'warning')
-      end
+      erb gen_message('Sorry you are not logged, please login first!', 'warning')
     end
   end
 end

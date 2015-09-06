@@ -8,6 +8,16 @@ require_relative 'lib/opr_bm'
 require_relative 'lib/opr_tag'
 
 class BMServer < Sinatra::Application
+  class << self
+    def a_get(paths, opts = {}, &control)
+      paths.each { |url| get(url, opts, &control) }
+    end
+
+    def a_post(paths, opts = {}, &control)
+      paths.each { |url| post(url, opts, &control) }
+    end
+  end
+
   set :public_folder, File.dirname(__FILE__) + '/static'
   enable :sessions
   helpers BMServerHelper
@@ -17,14 +27,14 @@ class BMServer < Sinatra::Application
   def initialize
     super
     @serv_cfg = YAML.load_file('conf/parseapi.yml')
+    @serv_cfg[:application_id] ||= ENV['PARSE_APP_ID']
+    @serv_cfg[:rest_api_key] ||= ENV['PARSE_API_KEY']
     Parse.init :application_id => @serv_cfg[:application_id], :api_key => @serv_cfg[:rest_api_key]
     @head_message = {}
   end
 
-  ['/', '/index'].each do |url|
-    get url do
-      erb :index
-    end
+  a_get ['/', '/index'] do
+    erb :index
   end
 
   get '/tags' do
@@ -36,9 +46,10 @@ class BMServer < Sinatra::Application
   end
 
   post '/tags' do
-    puts params.inspect
-    op_tag(@serv_cfg[:tag_name], params)
-    redirect '/tags'
+    ensure_logged_in do
+      op_tag(@serv_cfg[:tag_name], params)
+      redirect '/tags'
+    end
   end
 
   get '/bookmarks' do
@@ -61,8 +72,10 @@ class BMServer < Sinatra::Application
   end
 
   post '/bookmarks' do
-    send("#{params[:opr]}_bm", @serv_cfg[:bm_name], @serv_cfg[:tag_name], params)
-    redirect '/bookmarks'
+    ensure_logged_in do
+      send("#{params[:opr]}_bm", @serv_cfg[:bm_name], @serv_cfg[:tag_name], params)
+      redirect '/bookmarks'
+    end
   end
 
   post '/signup' do
@@ -86,24 +99,40 @@ class BMServer < Sinatra::Application
 
   post '/signin' do
     name, password = params[:username], params[:password]
-    return erb :index if name.empty? || password.empty?
     begin
       user = Parse::User.authenticate(name, password)
       session[:user] = user
       @head_message[name] = gen_message('Login success.', 'success')
-      redirect "/"
+      redirect '/'
     rescue Parse::ParseProtocolError
       erb :index, :locals => {:message => gen_message('用户名或者密码错误^,^', 'danger')}
     end
   end
 
-  # signout
+  post '/reset_password' do
+    Parse::User.reset_password(params[:email])
+    erb gen_message("密码重置链接已经发送到邮箱 #{params[:email]}", 'success')
+  end
+
+  get '/fast_add_bm' do
+    begin
+      user = Parse::User.authenticate(params[:username], params[:password])
+      session[:user] = user
+      add_bm @serv_cfg[:bm_name], @serv_cfg[:tag_name], params
+      "<pre>Add bookmark successfull:\n#{params[:url]}</pre>"
+    rescue Parse::ParseProtocolError
+      erb :index, :locals => {:message => gen_message('用户名或者密码错误^,^', 'danger')}
+    end
+  end
+
   get '/signout' do
     session.clear
     redirect '/'
   end
 
-
+  get '/account' do
+    ensure_logged_in {erb :account }
+  end
 end
 
 BMServer.run!
