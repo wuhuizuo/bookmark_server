@@ -17,7 +17,7 @@ function init_bm() {
         $('div#bm_dialog [name=tags]').val(bookmark.find('#tags').text());
         $('div#bm_dialog [name=desc]').val(bookmark.find('#desc').text());
         $('div#bm_dialog [name=url]').val(bookmark.find('#url').attr("href"));
-        $('div#bm_dialog #bmLabel').val('编辑书签');
+        $('div#bm_dialog #bmLabel').text('编辑书签');
     });
     $('.bm_add').on('click', function () {
         $('div#bm_dialog [name]').prop('readonly', false);
@@ -26,7 +26,7 @@ function init_bm() {
         $('div#bm_dialog [name=tags]').val('');
         $('div#bm_dialog [name=desc]').val('');
         $('div#bm_dialog [name=url]').val('');
-        $('div#bm_dialog #bmLabel').val('添加书签');
+        $('div#bm_dialog #bmLabel').text('添加书签');
     });
     $('.bm_delete').on('click', function (event) {
         event.preventDefault();
@@ -34,7 +34,10 @@ function init_bm() {
         $('div#bm_dialog [name]').prop('readonly', true);
         $('div#bm_dialog [name=opr]').val('delete');
         $('div#bm_dialog [name=bm_id]').val(bookmark.find('#bm_id').val());
-        $('div#bm_dialog #bmLabel').val('确定删除此书签吗?');
+        $('div#bm_dialog [name=tags]').val(bookmark.find('#tags').text());
+        $('div#bm_dialog [name=desc]').val(bookmark.find('#desc').text());
+        $('div#bm_dialog [name=url]').val(bookmark.find('#url').attr("href"));
+        $('div#bm_dialog #bmLabel').text('确定删除此书签吗?');
     });
     $('div#bm_dialog .submit-trigger').on('click', function () {
         $('div#bm_dialog form').submit();

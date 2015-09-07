@@ -1,6 +1,6 @@
 bookmark_server
 =======
-a simple personal online bookmark server
+> a simple personal online bookmark server
 
 TODO:
     1.add tag edit and delete function and user can see the tag description,no only the tag name.
