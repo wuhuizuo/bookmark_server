@@ -29,6 +29,7 @@ class BMServer < Sinatra::Application
     @serv_cfg = YAML.load_file('conf/parseapi.yml')
     @serv_cfg[:application_id] ||= ENV['PARSE_APP_ID']
     @serv_cfg[:rest_api_key] ||= ENV['PARSE_API_KEY']
+    puts @serv_cfg
     Parse.init :application_id => @serv_cfg[:application_id], :api_key => @serv_cfg[:rest_api_key]
     @head_message = {}
   end
