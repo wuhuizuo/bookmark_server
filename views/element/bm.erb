@@ -2,7 +2,8 @@
   <input id="bm_id" class="hidden" value="<%= bm.parse_object_id %>">
   <div class='thumbnail'>
     <a href="<%= bm['url'] %>" target="_blank">
-      <img src="http://immediatenet.com/t/l?Size=1024x768&URL=<%= bm['url'] %>">
+      <% icon_url = bm['url'].sub(URI.parse(bm['url']), '/favicon.ico') %>
+      <img src="<%= icon_url %">
     </a>
   </div>
   <div class='desc'>
