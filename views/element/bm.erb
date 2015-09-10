@@ -2,7 +2,12 @@
   <input id="bm_id" class="hidden" value="<%= bm.parse_object_id %>">
   <div class='thumbnail'>
     <a href="<%= bm['url'] %>" target="_blank">
-      <% icon_url = bm['url'].sub(URI.parse(bm['url']).request_uri, '/favicon.ico') %>
+      <% icon_url = URI.parse(bm['url']) %>
+      <% if icon_url.is_a?(URI::HTTP) %>
+        <% icon_url = bm['url'].sub(icon_url.request_uri, '/favicon.ico') %>
+      <% else %>
+        <% icon_url = '/imgs/unknown.png' %>
+      <% end %>
       <img src="<%= icon_url %>"
     </a>
   </div>
