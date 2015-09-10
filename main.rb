@@ -29,7 +29,6 @@ class BMServer < Sinatra::Application
     @serv_cfg = YAML.load_file('conf/parseapi.yml')
     @serv_cfg[:application_id] ||= ENV['PARSE_APP_ID']
     @serv_cfg[:rest_api_key] ||= ENV['PARSE_API_KEY']
-    puts @serv_cfg
     Parse.init :application_id => @serv_cfg[:application_id], :api_key => @serv_cfg[:rest_api_key]
     @head_message = {}
   end
@@ -106,7 +105,7 @@ class BMServer < Sinatra::Application
       @head_message[name] = gen_message('Login success.', 'success')
       redirect '/'
     rescue Parse::ParseProtocolError
-      erb :index, :locals => {:message => gen_message("用户名或者密码错误^,^\ndebug info:\n#{@serv_cfg}\n#{ENV.inspect}", 'danger')}
+      erb :index, :locals => {:message => gen_message('用户名或者密码错误^,^', 'danger')}
     end
   end
 
