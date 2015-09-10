@@ -1,5 +1,6 @@
 #encoding:utf-8
 require 'thin'
+require 'uri'
 require 'yaml'
 require 'sinatra'
 require 'parse-ruby-client'
