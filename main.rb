@@ -106,7 +106,7 @@ class BMServer < Sinatra::Application
       @head_message[name] = gen_message('Login success.', 'success')
       redirect '/'
     rescue Parse::ParseProtocolError
-      erb :index, :locals => {:message => gen_message('用户名或者密码错误^,^', 'danger')}
+      erb :index, :locals => {:message => gen_message("用户名或者密码错误^,^\ndebug info:\n#{@serv_cfg}\n#{ENV.inspect}", 'danger')}
     end
   end
 
