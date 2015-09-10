@@ -1,0 +1,44 @@
+<% username = session[:user]['username'] %>
+<div class="row">
+  <div class="col-xs-6">
+    <div class="panel panel-success">
+      <div class="panel-heading">
+        <div class="panel-title">帐号</div>
+      </div>
+      <div class="panel-body">
+        <p>reset password.</p>
+
+        <form action="/reset_password" method="post">
+          <label>E-mail:</label>
+          <input name="email" class="form-control" placeholder='abc@abc.com'>
+          <br>
+          <button class='btn btn-success' type="submit">Send Reset</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-6">
+    <div class="panel panel-success">
+      <div class="panel-heading">
+        <div class="panel-title">有用的工具</div>
+      </div>
+      <div class="panel-body">
+        <p>填写好密码后,将下方的按钮拖到你浏览器的书签工具栏中,然后在你浏览网页时可通过点按它来实现保存书签。</p>
+
+        <div class='input-group'>
+          <input id='fast_password' class="form-control" type="password" placeholder="请填写登录密码">
+          <% fast_add_url = "'http://cloud-bm.herokuapp.com/fast_add_bm?url='+encodeURIComponent(window.location.href)+'&desc='+encodeURIComponent(document.title)+'&username=#{username}'+'&password='" %>
+          <a class='input-group-addon btn btn-success' id='fast_link' href="javascript:var w = window.open(<%= fast_add_url %>);">Drage
+            me to bookmark bar!</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+    $('#fast_password').on('change', function () {
+        var href = $('#fast_link').attr('href');
+        $('#fast_link').attr('href', href.replace(/password=.*'\);$/, 'password=' + this.value + "');"));
+    });
+</script>
